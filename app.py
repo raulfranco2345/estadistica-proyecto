@@ -44,3 +44,15 @@ if df is not None:
     
     # Información básica de la muestra
     st.write(f"**Tamaño de la muestra (n):** {len(df)}")
+
+    # --- MÓDULO 2: ESTADÍSTICA DESCRIPTIVA ---
+if df is not None:
+    st.divider()
+    st.header("2. Estadísticas Descriptivas")
+    
+    variable = df.columns[0] # Tomamos la primera columna
+    
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Media", f"{df[variable].mean():.2f}")
+    col2.metric("Mediana", f"{df[variable].median():.2f}")
+    col3.metric("Desv. Estándar", f"{df[variable].std():.2f}")
