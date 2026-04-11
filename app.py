@@ -56,3 +56,18 @@ if df is not None:
     col1.metric("Media", f"{df[variable].mean():.2f}")
     col2.metric("Mediana", f"{df[variable].median():.2f}")
     col3.metric("Desv. Estándar", f"{df[variable].std():.2f}")
+
+    # --- MÓDULO 3: VISUALIZACIÓN ---
+    st.divider()
+    st.header("3. Visualización de Distribución")
+    
+    # Creamos dos columnas para los gráficos
+    col_graf1, col_graf2 = st.columns(2)
+    
+    with col_graf1:
+        st.subheader("Histograma y KDE")
+        fig_hist, ax_hist = plt.subplots()
+        import seaborn as sns # Importación local por seguridad
+        sns.histplot(df[variable], kde=True, ax=ax_hist, color="skyblue")
+        ax_hist.set_title("Distribución de Frecuencias")
+        st.pyplot(fig_hist)
