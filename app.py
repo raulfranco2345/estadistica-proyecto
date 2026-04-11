@@ -71,3 +71,10 @@ if df is not None:
         sns.histplot(df[variable], kde=True, ax=ax_hist, color="skyblue")
         ax_hist.set_title("Distribución de Frecuencias")
         st.pyplot(fig_hist)
+
+        with col_graf2:
+        st.subheader("Boxplot (Valores Atípicos)")
+        fig_box, ax_box = plt.subplots()
+        sns.boxplot(x=df[variable], ax=ax_box, color="lightcoral")
+        ax_box.set_title("Identificación de Outliers")
+        st.pyplot(fig_box)
