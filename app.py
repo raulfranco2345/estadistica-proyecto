@@ -75,11 +75,11 @@ if df is not None:
         st.pyplot(fig_hist)
 
         with col_graf2:
-        st.subheader("Boxplot (Valores Atípicos)")
-        fig_box, ax_box = plt.subplots()
-        sns.boxplot(x=df[variable], ax=ax_box, color="lightcoral")
-        ax_box.set_title("Identificación de Outliers")
-        st.pyplot(fig_box)
+            st.subheader("Boxplot (Valores Atípicos)") # Esta línea debe tener espacio a la izquierda
+            fig_box, ax_box = plt.subplots()
+            sns.boxplot(x=df[variable], ax=ax_box, color="lightcoral")
+            ax_box.set_title("Identificación de Outliers")
+            st.pyplot(fig_box)
 
         # --- MÓDULO 4: INFERENCIA ESTADÍSTICA (IA BÁSICA) ---
     st.divider()
@@ -97,3 +97,23 @@ if df is not None:
     else:
         st.warning("🤖 La IA determina: Los datos NO siguen una Distribución Normal.")
         st.info("Sugerencia: Considera usar pruebas no paramétricas o revisar los outliers.")
+
+        # --- MÓDULO 5: PRUEBA DE HIPÓTESIS (Prueba Z) ---
+    st.divider()
+    st.header("5. Prueba de Hipótesis (Z-Test)")
+    
+    # Parámetros para la prueba
+    mu_h0 = st.number_input("Ingresa la Media Hipotética (μ₀):", value=50.0)
+    
+    # Cálculo Manual
+    x_barra = df[variable].mean()
+    sigma = df[variable].std()
+    n = len(df)
+    z_stat = (x_barra - mu_h0) / (sigma / np.sqrt(n))
+    
+    st.write(f"**Estadístico Z calculado:** {z_stat:.4f}")
+    
+    if abs(z_stat) > 1.96: # Nivel de significancia del 5%
+        st.error("Rechazamos H₀: Hay una diferencia significativa con la media hipotética.")
+    else:
+        st.success("No rechazamos H₀: No hay evidencia suficiente para decir que la media es distinta.")
