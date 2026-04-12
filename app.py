@@ -102,18 +102,49 @@ if df is not None:
     st.divider()
     st.header("5. Prueba de Hipótesis (Z-Test)")
     
-    # Parámetros para la prueba
-    mu_h0 = st.number_input("Ingresa la Media Hipotética (μ₀):", value=50.0)
+    col_z1, col_z2 = st.columns(2)
     
-    # Cálculo Manual
+    with col_z1:
+        # Parámetros para la prueba
+        mu_h0 = st.number_input("Ingresa la Media Hipotética (μ₀):", value=50.0)
+        
+        # Configuración de nivel de confianza dinámico
+        confianza = st.select_slider(
+            "Selecciona el Nivel de Confianza:",
+            options=[0.90, 0.95, 0.99],
+            value=0.95
+        )
+
+    # Valor crítico según confianza (Z de tablas)
+    valores_criticos = {0.90: 1.645, 0.95: 1.96, 0.99: 2.576}
+    z_critico = valores_criticos[confianza]
+    
+    # Cálculo Manual del estadístico Z
     x_barra = df[variable].mean()
     sigma = df[variable].std()
     n = len(df)
+    
+    # Fórmula: Z = (x̄ - μ) / (σ / √n)
     z_stat = (x_barra - mu_h0) / (sigma / np.sqrt(n))
     
-    st.write(f"**Estadístico Z calculado:** {z_stat:.4f}")
+    with col_z2:
+        st.write(f"**Estadístico Z calculado:** `{z_stat:.4f}`")
+        st.write(f"**Valor crítico (z):** `{z_critico}`")
+        
+        if abs(z_stat) > z_critico:
+            st.error(f"🔴 Rechazamos H₀: Hay una diferencia significativa con la media hipotética.")
+        else:
+            st.success(f"🟢 No rechazamos H₀: No hay evidencia suficiente para decir que la media es distinta.")
+
+    # --- MÓDULO 6: EXPORTACIÓN ---
+    st.divider()
+    st.header("6. Exportar Resultados")
     
-    if abs(z_stat) > 1.96: # Nivel de significancia del 5%
-        st.error("Rechazamos H₀: Hay una diferencia significativa con la media hipotética.")
-    else:
-        st.success("No rechazamos H₀: No hay evidencia suficiente para decir que la media es distinta.")
+    st.write("Puedes descargar los datos actuales para incluirlos en tu reporte final.")
+    csv = df.to_csv(index=False).encode('utf-8')
+    st.download_button(
+        label="📥 Descargar datos en CSV",
+        data=csv,
+        file_name='analisis_estadistico_upchiapas.csv',
+        mime='text/csv',
+    )
