@@ -2,6 +2,8 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # Configuración básica de la página
 st.set_page_config(page_title="App de Estadística e IA", layout="wide")
@@ -78,3 +80,20 @@ if df is not None:
         sns.boxplot(x=df[variable], ax=ax_box, color="lightcoral")
         ax_box.set_title("Identificación de Outliers")
         st.pyplot(fig_box)
+
+        # --- MÓDULO 4: INFERENCIA ESTADÍSTICA (IA BÁSICA) ---
+    st.divider()
+    st.header("4. Análisis de Normalidad")
+    
+    from scipy.stats import shapiro
+    
+    stat, p = shapiro(df[variable])
+    
+    st.write(f"**Resultado de la prueba Shapiro-Wilk:** p-valor = {p:.4f}")
+    
+    if p > 0.05:
+        st.success("🤖 La IA determina: Los datos parecen seguir una Distribución Normal.")
+        st.info("Sugerencia: Puedes usar pruebas paramétricas (como la Prueba Z o T).")
+    else:
+        st.warning("🤖 La IA determina: Los datos NO siguen una Distribución Normal.")
+        st.info("Sugerencia: Considera usar pruebas no paramétricas o revisar los outliers.")
