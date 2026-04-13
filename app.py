@@ -5,6 +5,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+with st.sidebar:
+    st.image("https://www.upchiapas.edu.mx/images/logo_up.png", width=200)
+    st.header("⚙️ Panel de Control")
+    color_graf = st.color_picker("Color de los gráficos:", "#3498db")
+    st.info("Autor: Fabricio Raúl Franco Córdova")
+
 st.set_page_config(page_title="Estadística e IA - UP Chiapas", layout="wide")
 st.title("🚀 Proyecto Final: Análisis Estadístico e IA")
 st.markdown("### Estudiante: Franco Córdova Fabricio Raúl | ID: 253393")
