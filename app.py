@@ -2,24 +2,21 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 st.set_page_config(page_title="Estadística e IA - UP Chiapas", layout="wide")
 st.title("🚀 Proyecto Final: Análisis Estadístico e IA")
-st.caption("Autor: Franco Córdova Fabricio Raúl")
-# --- SIDEBAR: IDENTIDAD (Commit 9 y 10) ---
-with st.sidebar:
-    st.image("https://www.upchiapas.edu.mx/images/logo_up.png", width=200)
-    st.header("⚙️ Panel de Control")
-    st.divider()
-    st.subheader("🎨 Personalización")
-    color_graf = st.color_picker("Color de identidad visual:", "#3498db")
-    st.info("Autor: Franco Córdova Fabricio Raúl | ID: 253393")
-# --- MÓDULO 7: REFLEXIÓN (Commit 8) ---
-st.divider()
-st.header("7. Reflexión del Proceso Creativo")
-with st.expander("Ver preguntas de reflexión"):
+st.markdown("### Estudiante: Franco Córdova Fabricio Raúl | ID: 253393")
+
+# Datos base para que los commits tengan algo que procesar
+df = pd.DataFrame(np.random.normal(50, 10, 100), columns=["Variable"])
+variable = "Variable"
+
+st.header("5. Documentación y Reflexión Ética")
+with st.expander("Preguntas sobre el proceso creativo"):
     st.markdown("""
-    * **1. ¿Qué limitaciones encontraste?** La IA presenta errores de indentación y requiere conocimiento técnico.
-    * **2. ¿Cómo verificaste la precisión?** Se contrastaron los resultados de la 'Prueba Z' manual con librerías estándar.
-    * **3. Impacto ético:** Es vital la supervisión humana para no aceptar conclusiones automáticas erróneas.
+    **1. ¿Limitaciones?** Errores de lógica en la IA que requieren revisión.
+    **2. ¿Validación?** Comparación de cálculos con Excel y manuales.
+    **3. ¿Ética?** Uso responsable de la IA como apoyo, no como autor total.
     """)
