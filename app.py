@@ -39,3 +39,13 @@ with st.expander("Preguntas sobre el proceso creativo"):
     **2. ¿Validación?** Comparación de cálculos con Excel y manuales.
     **3. ¿Ética?** Uso responsable de la IA como apoyo, no como autor total.
     """)
+
+    if st.checkbox("Mostrar manual de uso (README)"):
+    st.markdown("""
+    ### Guía Rápida
+    1. Carga tus datos en el sidebar.
+    2. Personaliza el color.
+    3. Analiza los gráficos y el explorador.
+    """)
+
+st.caption("Versión Final 1.0.0 - UP Chiapas")
