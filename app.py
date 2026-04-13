@@ -4,30 +4,40 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from scipy.stats import shapiro
 
-# Configuración básica de la página
-st.set_page_config(page_title="App de Estadística e IA", layout="wide")
+# Configuración básica de la página (DEBE IR PRIMERO)
+st.set_page_config(page_title="App de Estadística e IA - UP Chiapas", layout="wide")
 
-# Título y Créditos
+# --- SIDEBAR: CONFIGURACIÓN (COMMIT 9) ---
+with st.sidebar:
+    # Logo oficial de la UP Chiapas
+    st.image("https://www.upchiapas.edu.mx/images/logo_up.png", width=200)
+    st.header("⚙️ Configuración")
+    
+    opcion = st.radio(
+        "Selecciona el origen de los datos:", 
+        ["Generar datos sintéticos", "Subir archivo CSV"]
+    )
+    
+    st.divider()
+    st.info("Desarrollado para la asignatura de Estadística e IA.")
+    st.caption("Estudiante: Franco Córdova Fabricio Raúl")
+
+# --- TÍTULO Y CRÉDITOS ---
 st.title("📊 Documentación de Proceso Creativo")
 st.markdown("### Estudiante: Franco Córdova Fabricio Raúl")
-st.write("Objetivo: Evaluar las limitaciones de la IA en el desarrollo de software estadístico.")
+st.write("**Objetivo:** Evaluar las limitaciones de la IA en el desarrollo de software estadístico.")
 
 st.divider()
 
 # --- MÓDULO 1: CARGA DE DATOS ---
 st.header("1. Carga de Datos")
 
-opcion = st.radio(
-    "Selecciona el origen de los datos:", 
-    ["Generar datos sintéticos", "Subir archivo CSV"]
-)
-
-# Inicializamos el DataFrame como None
+# Inicializamos el DataFrame
 df = None
 
 if opcion == "Generar datos sintéticos":
-    # Generamos 100 números con una distribución normal (media 50, desv 10)
     datos_base = np.random.normal(loc=50, scale=10, size=100)
     df = pd.DataFrame(datos_base, columns=["Variable_Analizada"])
     st.success("✅ ¡Datos sintéticos generados con éxito!")
@@ -39,112 +49,107 @@ else:
     else:
         st.info("💡 Esperando a que subas un archivo CSV...")
 
-# Solo mostramos la tabla si el DataFrame existe
+# PROCESAMIENTO PRINCIPAL (Todo lo que depende de que existan datos)
 if df is not None:
-    st.subheader("Vista previa de los datos")
-    st.dataframe(df.head(10)) # Muestra las primeras 10 filas
+    variable = df.columns[0]
     
-    # Información básica de la muestra
+    st.subheader("Vista previa de los datos")
+    st.dataframe(df.head(10))
     st.write(f"**Tamaño de la muestra (n):** {len(df)}")
 
     # --- MÓDULO 2: ESTADÍSTICA DESCRIPTIVA ---
-if df is not None:
     st.divider()
     st.header("2. Estadísticas Descriptivas")
     
-    variable = df.columns[0] # Tomamos la primera columna
-    
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Media", f"{df[variable].mean():.2f}")
-    col2.metric("Mediana", f"{df[variable].median():.2f}")
-    col3.metric("Desv. Estándar", f"{df[variable].std():.2f}")
+    col_met1, col_met2, col_met3 = st.columns(3)
+    col_met1.metric("Media", f"{df[variable].mean():.2f}")
+    col_met2.metric("Mediana", f"{df[variable].median():.2f}")
+    col_met3.metric("Desv. Estándar", f"{df[variable].std():.2f}")
 
     # --- MÓDULO 3: VISUALIZACIÓN ---
     st.divider()
     st.header("3. Visualización de Distribución")
     
-    # Creamos dos columnas para los gráficos
     col_graf1, col_graf2 = st.columns(2)
     
     with col_graf1:
         st.subheader("Histograma y KDE")
         fig_hist, ax_hist = plt.subplots()
-        import seaborn as sns # Importación local por seguridad
         sns.histplot(df[variable], kde=True, ax=ax_hist, color="skyblue")
         ax_hist.set_title("Distribución de Frecuencias")
         st.pyplot(fig_hist)
 
-        with col_graf2:
-            st.subheader("Boxplot (Valores Atípicos)") # Esta línea debe tener espacio a la izquierda
-            fig_box, ax_box = plt.subplots()
-            sns.boxplot(x=df[variable], ax=ax_box, color="lightcoral")
-            ax_box.set_title("Identificación de Outliers")
-            st.pyplot(fig_box)
+    with col_graf2:
+        st.subheader("Boxplot (Valores Atípicos)")
+        fig_box, ax_box = plt.subplots()
+        sns.boxplot(x=df[variable], ax=ax_box, color="lightcoral")
+        ax_box.set_title("Identificación de Outliers")
+        st.pyplot(fig_box)
 
-        # --- MÓDULO 4: INFERENCIA ESTADÍSTICA (IA BÁSICA) ---
+    # --- MÓDULO 4: INFERENCIA ESTADÍSTICA ---
     st.divider()
     st.header("4. Análisis de Normalidad")
-    
-    from scipy.stats import shapiro
-    
     stat, p = shapiro(df[variable])
-    
-    st.write(f"**Resultado de la prueba Shapiro-Wilk:** p-valor = {p:.4f}")
+    st.write(f"**Resultado de la prueba Shapiro-Wilk:** p-valor = `{p:.4f}`")
     
     if p > 0.05:
         st.success("🤖 La IA determina: Los datos parecen seguir una Distribución Normal.")
-        st.info("Sugerencia: Puedes usar pruebas paramétricas (como la Prueba Z o T).")
     else:
         st.warning("🤖 La IA determina: Los datos NO siguen una Distribución Normal.")
-        st.info("Sugerencia: Considera usar pruebas no paramétricas o revisar los outliers.")
 
-        # --- MÓDULO 5: PRUEBA DE HIPÓTESIS (Prueba Z) ---
+    # --- MÓDULO 5: PRUEBA DE HIPÓTESIS (Prueba Z) ---
     st.divider()
     st.header("5. Prueba de Hipótesis (Z-Test)")
     
     col_z1, col_z2 = st.columns(2)
-    
     with col_z1:
-        # Parámetros para la prueba
         mu_h0 = st.number_input("Ingresa la Media Hipotética (μ₀):", value=50.0)
-        
-        # Configuración de nivel de confianza dinámico
-        confianza = st.select_slider(
-            "Selecciona el Nivel de Confianza:",
-            options=[0.90, 0.95, 0.99],
-            value=0.95
-        )
+        confianza = st.select_slider("Nivel de Confianza:", options=[0.90, 0.95, 0.99], value=0.95)
 
-    # Valor crítico según confianza (Z de tablas)
     valores_criticos = {0.90: 1.645, 0.95: 1.96, 0.99: 2.576}
     z_critico = valores_criticos[confianza]
-    
-    # Cálculo Manual del estadístico Z
-    x_barra = df[variable].mean()
-    sigma = df[variable].std()
-    n = len(df)
-    
-    # Fórmula: Z = (x̄ - μ) / (σ / √n)
-    z_stat = (x_barra - mu_h0) / (sigma / np.sqrt(n))
+    z_stat = (df[variable].mean() - mu_h0) / (df[variable].std() / np.sqrt(len(df)))
     
     with col_z2:
         st.write(f"**Estadístico Z calculado:** `{z_stat:.4f}`")
         st.write(f"**Valor crítico (z):** `{z_critico}`")
-        
         if abs(z_stat) > z_critico:
-            st.error(f"🔴 Rechazamos H₀: Hay una diferencia significativa con la media hipotética.")
+            st.error("🔴 Rechazamos H₀: Hay una diferencia significativa.")
         else:
-            st.success(f"🟢 No rechazamos H₀: No hay evidencia suficiente para decir que la media es distinta.")
+            st.success("🟢 No rechazamos H₀: No hay evidencia de diferencia significativa.")
 
     # --- MÓDULO 6: EXPORTACIÓN ---
     st.divider()
     st.header("6. Exportar Resultados")
-    
-    st.write("Puedes descargar los datos actuales para incluirlos en tu reporte final.")
     csv = df.to_csv(index=False).encode('utf-8')
-    st.download_button(
-        label="📥 Descargar datos en CSV",
-        data=csv,
-        file_name='analisis_estadistico_upchiapas.csv',
-        mime='text/csv',
-    )
+    st.download_button(label="📥 Descargar datos en CSV", data=csv, file_name='analisis_estadistico.csv', mime='text/csv')
+
+# --- MÓDULO 7: REFLEXIÓN (Este queda fuera del IF principal para que siempre se vea) ---
+st.divider()
+st.header("7. Reflexión del Proceso Creativo")
+with st.expander("Ver preguntas de reflexión"):
+    st.markdown("""
+    **1. ¿Qué limitaciones encontraste en la IA durante el desarrollo?**
+    *Respuesta:* La IA presenta errores de indentación y requiere conocimiento técnico para estructurar el flujo de Streamlit correctamente.
+    
+    **2. ¿Cómo verificaste la precisión de los cálculos estadísticos?**
+    *Respuesta:* Se contrastaron los resultados de la 'Prueba Z' manual con la lógica de librerías estándar.
+    
+    **3. Impacto ético del uso de IA en software estadístico:**
+    *Respuesta:* Es vital la supervisión humana para no aceptar conclusiones automáticas que podrían estar basadas en datos mal procesados.
+    """)
+    # --- MÓDULO 8: ANÁLISIS COMPARATIVO ---
+    st.divider()
+    st.header("8. Análisis Comparativo")
+    
+    comparativo = st.number_input("Valor de referencia para comparar:", value=50.0)
+    
+    # Creamos un gráfico de barras comparando la Media actual vs el valor de referencia
+    fig_comp, ax_comp = plt.subplots()
+    categorias = ['Media Actual', 'Referencia']
+    valores = [df[variable].mean(), comparativo]
+    ax_comp.bar(categorias, valores, color=['#3498db', '#e74c3c'])
+    ax_comp.set_ylabel('Valor')
+    ax_comp.set_title('Comparativa: Media vs Referencia')
+    
+    st.pyplot(fig_comp)
