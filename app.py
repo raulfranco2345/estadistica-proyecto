@@ -40,7 +40,8 @@ with st.expander("Preguntas sobre el proceso creativo"):
     **3. ¿Ética?** Uso responsable de la IA como apoyo, no como autor total.
     """)
 
-    if st.checkbox("Mostrar manual de uso (README)"):
+    # Módulo del Manual - Fíjate en los espacios del st.markdown
+if st.checkbox("Mostrar manual de uso (README)"):
     st.markdown("""
     ### Guía Rápida
     1. Carga tus datos en el sidebar.
